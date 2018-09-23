@@ -2,7 +2,7 @@
 const api = "https://bittorium.org/Blockexplorer";
 const coinDifficultyTarget=175;
 const symbol="BTOR";
-const coinUnits=100000000;
+const coinUnits=180000000;
 const blockchainExplorer = "?hash={id}#block";
 const transactionExplorer = "?hash={id}#transaction";
 
