@@ -174,7 +174,7 @@
         if (xhrgetSeedsStatus) xhrgetSeedsStatus.abort();
         for (let i = 0, len = seedsNodes.length; i < len; i++) {
             xhrgetSeedsStatus = $.ajax({
-                url: seedsNodes[i].url + '/status',
+                url: seedsNodes[i].url + '/getinfo',
                 method: "GET",
                 dataType: 'json',
                 cache: 'false',
@@ -280,7 +280,7 @@
                 if (data.hasOwnProperty('result')) {
                     let lastMinedBlockDetails = data.result;
                     updateText('alreadyGeneratedCoins', shortenLargeNumber(lastMinedBlockDetails.block.alreadyGeneratedCoins / coinUnits, 6, 0));
-                    updateText('supplypercent', (lastMinedBlockDetails.block.alreadyGeneratedCoins / 25000000000000).toFixed(2) + ' %');
+                    updateText('supplypercent', (lastMinedBlockDetails.block.alreadyGeneratedCoins / 180000000).toFixed(2) + ' %');
                     updateText('alreadyGeneratedTransactions', shortenLargeNumber(lastMinedBlockDetails.block.alreadyGeneratedTransactions, 3, 1));
                 } else {
                     showalert('alert-danger','Core error : ',data.error.message);
