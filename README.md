@@ -8,7 +8,6 @@ This is the new version of the Bittorium block explorer, network status and pool
  * Chrome : https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi
 
 
-![New block explorer](https://cdn.discordapp.com/attachments/403614252415451156/430861467278114836/bx.png)
 
 ## task list
 
