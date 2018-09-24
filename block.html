@@ -200,7 +200,7 @@
                     updateText('block.effectiveTxsMedian', shortenLargeNumber(block.effectiveSizeMedian, 2, 1) + 'B');
                     updateText('block.rewardPenalty', block.penalty + "%");
                     updateText('block.baseReward', getReadableCoins(block.baseReward, 2));
-                    updateText('block.transactionsFee', getReadableCoins(block.totalFeeAmount, 5));
+                    updateText('block.transactionsFee', getReadableCoins(block.totalFeeAmount, 2));
                     updateText('block.reward', getReadableCoins(block.reward, 2));
                     updateText('block.totalCoins', shortenLargeNumber(block.alreadyGeneratedCoins / coinUnits, 6, 0));
                     updateText('block.totalTransactions', shortenLargeNumber(block.alreadyGeneratedTransactions, 3, 1));
@@ -228,7 +228,7 @@
     // Handle transaction list
     function getTransactionCells(transaction) {
         return '<td>' + formatPaymentLink(transaction.hash) + '</td>' +
-            '<td>' + getReadableCoins(transaction.fee, 5, true) + '</td>' +
+            '<td>' + getReadableCoins(transaction.fee, 2, true) + '</td>' +
             '<td>' + getReadableCoins(transaction.amount_out, 2, false) + '</td>' +
             '<td>' + shortenLargeNumber(transaction.size, 2, 1) + 'B' + '</td>';
     }

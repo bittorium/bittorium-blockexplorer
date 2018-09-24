@@ -173,8 +173,8 @@
                     outputs = data.result.tx.vout;
                     block = data.result.block;
                     updateText('transaction.hash', transaction.hash);
-                    updateText('transaction.amount_out',getReadableCoins(transaction.amount_out, 4, false));
-                    updateText('transaction.fee', getReadableCoins(transaction.fee, 4, true));
+                    updateText('transaction.amount_out',getReadableCoins(transaction.amount_out, 2, false));
+                    updateText('transaction.fee', getReadableCoins(transaction.fee, 2, true));
                     if (!transaction.mixin)
                         $('#div_transaction_mixin').hide();
                     updateText('transaction.mixin', transaction.mixin);

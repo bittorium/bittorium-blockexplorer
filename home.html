@@ -354,7 +354,7 @@
     }
 
     var xhrGetTxPool;
-    // Get current mempool update is handled by anothoer timeout we have to kill on destroy
+    // Get current mempool update is handled by another timeout we have to kill on destroy
     function getTxPool() {
         if (xhrGetTxPool) xhrGetTxPool.abort();
         xhrGetTxPool = $.ajax({
@@ -371,7 +371,7 @@
             .done(function (data) {
                 if (data.hasOwnProperty('result')) {
                     txPool = data.result;
-                    updateText('nb_tx', txPool.transactions.length.toString() + ' transaction' + (txPool.transactions.length > 1 ? 's' : '') + ' in pool');
+                    updateText('nb_tx', txPool.transactions.length.toString() + ' transaction' + (txPool.transactions.length != 1 ? 's' : '') + ' in pool');
                     $('#transactions_rows').empty();
                     if (txPool.transactions.length > 0) {
                         renderTransactions(txPool.transactions);
@@ -401,7 +401,7 @@
     // Handle transaction pool
     function getTransactionCells(transaction) {
         return '<td>' + transaction.hash + '</td>' +
-            '<td>' + getReadableCoins(transaction.fee, 4, true) + '</td>' +
+            '<td>' + getReadableCoins(transaction.fee, 2, true) + '</td>' +
             '<td>' + getReadableCoins(transaction.amount_out, 2, false) + '</td>' +
             '<td>' + transaction.size + '</td>';
     }
