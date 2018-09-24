@@ -16,7 +16,6 @@ const poolList = [
 
 ];
 const seedsNodes = [
-    {"id":"rbx","url":"http://95.216.187.3:34916"},
-    {"id":"mtl","url":"http://95.216.187.3:34916"},
-    {"id":"sdn","url":"http://95.216.187.3:34916"},
+    {"id":"btor2","url":"http://95.216.187.3:34916"},
+    {"id":"btor1","url":"http://95.216.187.5:34916"},
 ];
