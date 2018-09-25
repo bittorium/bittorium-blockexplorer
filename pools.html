@@ -108,7 +108,7 @@
 </div>
 
 <script>
-    // todo : sortable collums on array
+    // todo : sortable columns on array
     currentPage = {
         destroy: function(){
             if (xhrGetCurrentPoolStat) {
@@ -129,14 +129,12 @@
                 clearTimeout(tx_wheel);
             }
             if ((typeof lastMinedBlockHeader !== 'undefined') && parseInt(lastMinedBlockHeader.block_header.height, 10) !== parseInt($('#blockchainHeight').attr('data-height'), 10)) {
-                $('#blockchainHeight').attr('data-height', lastMinedBlockHeader.block_header.height);
                 getCurrentMinedBlock();
                 getBlocks(lastMinedBlockHeader.block_header.height);
             }
         },
         update: function(){
             if ((typeof lastMinedBlockHeader !== 'undefined') && parseInt(lastMinedBlockHeader.block_header.height, 10) !== parseInt($('#blockchainHeight').attr('data-height'), 10)) {
-                $('#blockchainHeight').attr('data-height', lastMinedBlockHeader.block_header.height);
                 getCurrentMinedBlock();
                 getBlocks(lastMinedBlockHeader.block_header.height);
             }
@@ -380,6 +378,7 @@
                     $('#networkHashrate').attr('data-globalHR', currentMinedBlock.difficulty / coinDifficultyTarget);
                     updateText('nextDifficulty', currentMinedBlock.difficulty.toString());
                     updateText('blockchainHeight', currentMinedBlock.height);
+                    $('#blockchainHeight').attr('data-height', currentMinedBlock.height);
                 } else {
                     showalert('alert-danger','Core error : ',data.error.message);
                     $('#loading').hide();
