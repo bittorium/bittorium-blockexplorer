@@ -1,6 +1,6 @@
 // settings
 const api = "https://explorer.bittorium.org/api";
-const coinDifficultyTarget=175;
+const coinDifficultyTarget=240;
 const symbol="BTOR";
 const coinUnits=100;
 const blockchainExplorer = "?hash={id}#block";
