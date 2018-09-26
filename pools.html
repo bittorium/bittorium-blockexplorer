@@ -220,7 +220,7 @@
                 hashrate = getReadableHashRateString(poolData[i].data.pool.hashrate);
                 poolCoeff=poolData[i].data.pool.hashrate/$('#networkHashrate').attr('data-globalHR');
                 miners = poolData[i].data.pool.miners;
-                blocTimeAgo = jQuery.timeago(new Date(parseInt(poolData[i].data.pool.lastBlockFound)));
+                blocTimeAgo = poolData[i].data.pool.lastBlockFound ? jQuery.timeago(new Date(parseInt(poolData[i].data.pool.lastBlockFound))) : 'Never';
                 pending = calculatePending(poolData[i].data);
                 donation = calculateDonations(poolData[i].data);
                 fee = calculateTotalFee(poolData[i].data);
@@ -304,7 +304,7 @@
         updateText('totalHeight', parseInt($('#blockchainHeight').attr('data-height')));
         updateText('totalMiners', totalMiners);
         updateText('totalHashrate', getReadableHashRateString(totalHashrate));
-        updateText('totalLastFound', jQuery.timeago(new Date(parseInt(totalLastFound))));
+        updateText('totalLastFound', totalLastFound ? jQuery.timeago(new Date(parseInt(totalLastFound))) : 'Never');
         updateText('totalPending',totalPending);
         updateText('totalDonations', totalDonations.toFixed(2)+'%');
         updateText('totalFees', totalFee.toFixed(2)+'%');
