@@ -148,8 +148,8 @@
         console.log("pool update tick");
         $('#pools_updated').fadeIn('fast');
         poolPulse = setTimeout(function() {
-            $('#pools_updated').fadeOut(2000);
-        }, 2000); // <-- time in milliseconds
+            $('#pools_updated').fadeOut(10000);
+        },10000); // <-- time in milliseconds
 
         fetchedData=[];
         poolData.length=0;
@@ -244,7 +244,6 @@
                         $('#out_rows').append('<tr>' +
                             '<td id=host-' + poolData[i].id + '>' +
                             '<i id="flag-' + poolData[i].id + '" class="fas fa-exclamation-circle"></i>'+
-                            // ' <a target=blank href=' + poolData[i].url + '>flag' + poolData[i].url + '</a></td>' +
                             '<a '+loc+'target=blank href='+ poolData[i].url + '>'+ flag + ' ' + poolData[i].url + '</a></td>' +
                             '<td id=height-' + poolData[i].id + '>' + height + '</td>' +
                             '<td id=hashrate-' + poolData[i].id + '>' + hashrate + '</td>' +
