@@ -38,7 +38,7 @@
         <table class="table table-hover table-sm">
             <thead>
             <tr class="thead-dark">
-                <th colspan="8">Running pools</th>
+                <th colspan="9">Running pools</th>
             </tr>
             <tr>
                 <th>Address</th>
@@ -47,6 +47,7 @@
                 <th><i class="fas fa-users"></i> Miners</th>
                 <th><i class="far fa-clock"></i> Last mining block</th>
                 <th><i class="fas fa-cubes"></i> Pending blocks</th>
+                <th><i class="fa fa-th-large"></i> Total blocks</th>
                 <th><i class="fas fa-donate"></i> Donation</th>
                 <th><i class="fa fa-dollar-sign"></i> Total fee</th>
             </tr>
@@ -60,6 +61,7 @@
                 <td><span id=totalMiners></span></td>
                 <td><span id=totalLastFound></span></td>
                 <td><span id=totalPending></span></td>
+                <td><span id=totalBlocks></span></td>
                 <td><span id=totalDonations></span></td>
                 <td><span id=totalFees></span></td>
             </tr>
@@ -73,7 +75,7 @@
         <table id="out_table" class="table table-hover table-sm d-none">
         <thead>
         <tr class="thead-light">
-            <th colspan="8">Out of order pools (not synced or stucked)</th>
+            <th colspan="9">Out of order pools (not synced or stucked)</th>
         </tr>
         <tr>
             <th>Address</th>
@@ -82,6 +84,7 @@
             <th><i class="fas fa-users"></i> Miners</th>
             <th><i class="far fa-clock"></i> Last mining block</th>
             <th><i class="fas fa-cubes"></i> Pending blocks</th>
+            <th><i class="fa fa-th-large"></i> Total blocks</th>
             <th><i class="fas fa-donate"></i> Donation</th>
             <th><i class="fa fa-dollar-sign"></i> Total fee</th>
         </tr>
@@ -211,6 +214,7 @@
         let nbPoolOk = 0;
         let totalLastFound = 0;
         let totalPending = 0;
+        let totalBlocks = 0;
         let totalDonations = 0;
         let totalFee = 0 ;
         for(let i= 0; i < poolData.length; i++){
@@ -222,6 +226,7 @@
                 miners = poolData[i].data.pool.miners;
                 blocTimeAgo = poolData[i].data.pool.lastBlockFound ? jQuery.timeago(new Date(parseInt(poolData[i].data.pool.lastBlockFound))) : 'Never';
                 pending = calculatePending(poolData[i].data);
+                blocks = poolData[i].data.pool.totalBlocks;
                 donation = calculateDonations(poolData[i].data);
                 fee = calculateTotalFee(poolData[i].data);
                 flag = poolData[i].flag != undefined ? '<img class="flag" src="images/flags/'+poolData[i].flag.toLowerCase()+'.svg">' : '';
@@ -237,6 +242,7 @@
                         updateText('miners-'+poolData[i].id, miners);
                         updateText('lastBlockFound-'+poolData[i].id, blocTimeAgo);
                         updateText('pending-'+poolData[i].id, pending);
+                        updateText('blocks-'+poolData[i].id, blocks);
                         updateText('donation-'+poolData[i].id, donation);
                         updateText('totalFee-'+poolData[i].id, fee);
                     } else {
@@ -250,6 +256,7 @@
                             '<td id=miners-' + poolData[i].id + '>' + miners + '</td>' +
                             '<td id=lastBlockFound-' + poolData[i].id + '>' + blocTimeAgo + '</td>' +
                             '<td id=pending-' + poolData[i].id + '>' + pending + '</td>' +
+                            '<td id=blocks-' + poolData[i].id + '>' + blocks + '</td>' +
                             '<td id=donation-' + poolData[i].id + '>' + donation + '%</td>' +
                             '<td id=totalFee-' + poolData[i].id + '>' + fee + '%</td>' +
                             '</tr>');
@@ -263,6 +270,7 @@
                     totalMiners += miners;
                     totalLastFound = poolData[i].data.pool.lastBlockFound > totalLastFound ? poolData[i].data.pool.lastBlockFound : totalLastFound;
                     totalPending += pending;
+                    totalBlocks += blocks;
                     totalDonations += donation * poolCoeff;
                     totalFee += fee * poolCoeff;
                 }
@@ -273,6 +281,7 @@
                     updateText('miners-'+poolData[i].id, miners);
                     updateText('lastBlockFound-'+poolData[i].id, blocTimeAgo);
                     updateText('pending-'+poolData[i].id, pending);
+                    updateText('blocks-'+poolData[i].id, blocks);
                     updateText('donation-'+poolData[i].id, donation);
                     updateText('totalFee-'+poolData[i].id, fee);
                 } else {
@@ -284,6 +293,7 @@
                         '<td id=miners-' + poolData[i].id + '>' + miners + '</td>' +
                         '<td id=lastBlockFound-' + poolData[i].id + '>' + blocTimeAgo + '</td>' +
                         '<td id=pending-' + poolData[i].id + '>' + pending + '</td>' +
+                        '<td id=blocks-' + poolData[i].id + '>' + blocks + '</td>' +
                         '<td id=donation-' + poolData[i].id + '>' + donation + '%</td>' +
                         '<td id=totalFee-' + poolData[i].id + '>' + fee + '%</td>' +
                         '</tr>');
@@ -305,6 +315,7 @@
         updateText('totalHashrate', getReadableHashRateString(totalHashrate));
         updateText('totalLastFound', totalLastFound ? jQuery.timeago(new Date(parseInt(totalLastFound))) : 'Never');
         updateText('totalPending',totalPending);
+        updateText('totalBlocks',totalBlocks);
         updateText('totalDonations', totalDonations.toFixed(2)+'%');
         updateText('totalFees', totalFee.toFixed(2)+'%');
     }
