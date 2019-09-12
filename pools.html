@@ -33,9 +33,9 @@
         <h2>Bittorium known pools list</h2>
         <i id="pools_updated" class="fas fa-sync fa-spin"></i>
     </div>
-    <!--Running pools-->
-    <div id="pool_table" class="card-body table-responsive">
-        <table class="table table-hover table-sm">
+    <div id="pool_div" class="card-body table-responsive">
+        <!--Running pools-->
+        <table id="running_table" class="table table-hover table-sm">
             <thead>
             <tr class="thead-dark">
                 <th colspan="9">Running pools</th>
@@ -66,7 +66,7 @@
                 <td><span id=totalFees></span></td>
             </tr>
             </tfoot>
-            <tbody id="pool_rows">
+            <tbody id="running_rows">
             </tbody>
         </table>
 
@@ -155,12 +155,13 @@
         },10000); // <-- time in milliseconds
 
         fetchedData=[];
-        poolData.length=0;
         for (let i = 0, len = poolList.length; i < len; i++) {
+            if (!poolData[i]){
+                poolData[i] = {"id": poolList[i].id, "url": poolList[i].url, "status": false, "error": "Not reachable"};
+            }
+
             if(poolList[i].status) {
                 if (poolList[i].visible) {
-                    fetchedData.length = 0;
-                    poolData.length = 0;
                     xhrGetCurrentPoolStat = $.ajax({
                         url: poolList[i].api + '/stats',
                         method: "GET",
@@ -176,29 +177,24 @@
                         .done(function (data, status) {
                             if (data.hasOwnProperty('network')) {
                                 d = {"id": this.poolId, "url": this.poolUrl, "status": this.poolStatus, "flag":this.poolFlag,"loc":this.poolLoc, data};
-                                fetchedData.push(d);
-                                $.extend(true, poolData, fetchedData);
+                                poolData[i] = d;
                             } else {
                                 d = {"id": this.poolId, "url": this.poolUrl, "status": false, "error": status};
-                                fetchedData.push(d); // not reachable
-                                $.extend(true, poolData, fetchedData);
+                                poolData[i] = d;
                             }
 
                         })
                         .fail(function (xhrGetCurrentPoolStat, status) {
                             d = {"id": this.poolId, "url": this.poolUrl, "status": false, "error": status};
-                            fetchedData.push(d); // not reachable
-                            $.extend(true, poolData, fetchedData);
+                            poolData[i] = d;
                         })
                         .always(function () {
                             renderPoolData(poolData);
                         });
                 } // end if enabled
             } else {
-                fetchedData.length = 0;
-                d = {"id": poolList[i].id, "url": poolList[i].url};
-                fetchedData.push(d); // not reachable
-                $.extend(true, poolData, fetchedData);
+                d = {"id": poolList[i].id, "url": poolList[i].url, "status": false, "error": "disabled"};
+                poolData[i] = d;
                 renderPoolData(poolData);
             }
         }
@@ -217,7 +213,11 @@
         let totalBlocks = 0;
         let totalDonations = 0;
         let totalFee = 0 ;
-        for(let i= 0; i < poolData.length; i++){
+        for(let i= 0; i < poolList.length; i++){
+            if (!poolData[i]){
+                poolData[i] = {"id": poolList[i].id, "url": poolList[i].url, "status": false, "error": "Not reachable"};
+            }
+
             st = poolData[i].status; // false if an error occurs, get error in "error" ans if disabled in config
             if (st){
                 height = poolData[i].data.network.height;
@@ -232,10 +232,13 @@
                 flag = poolData[i].flag != undefined ? '<img class="flag" src="images/flags/'+poolData[i].flag.toLowerCase()+'.svg">' : '';
                 loc = poolData[i].loc != undefined ? 'data-toggle="popover" data-trigger="hover" data-placement="top" data-content="'+poolData[i].loc+'" ' : '';
                 // test if pool is synced
-                if(Math.abs(parseInt($('#blockchainHeight').attr('data-height'), 10) - poolData[i].data.network.height) > 3){
+                if(Math.abs(parseInt($('#blockchainHeight').attr('data-height'), 10) - height) > 3){
                     hashrate = 'N/A'; // not synced
                     miners = 'N/A';
                     pending = 'N/A';
+                    if (row = document.getElementById("host-"+poolData[i].id) && row.parentElement.parentElement.id !== "out_rows"){
+                      row.parentElement.remove();
+                    }
                     if (document.getElementById("host-"+poolData[i].id)){
                         updateText('height-'+poolData[i].id, height);
                         updateText('hashrate-'+poolData[i].id, hashrate);
@@ -243,10 +246,9 @@
                         updateText('lastBlockFound-'+poolData[i].id, blocTimeAgo);
                         updateText('pending-'+poolData[i].id, pending);
                         updateText('blocks-'+poolData[i].id, blocks);
-                        updateText('donation-'+poolData[i].id, donation);
-                        updateText('totalFee-'+poolData[i].id, fee);
+                        updateText('donation-'+poolData[i].id, donation + '%');
+                        updateText('totalFee-'+poolData[i].id, fee + '%');
                     } else {
-
                         $('#out_rows').append('<tr>' +
                             '<td id=host-' + poolData[i].id + '>' +
                             '<i id="flag-' + poolData[i].id + '" class="fas fa-exclamation-circle"></i>'+
@@ -275,6 +277,11 @@
                     totalFee += fee * poolCoeff;
                 }
 
+                row = document.getElementById("host-"+poolData[i].id);
+                if (row && row.parentElement.parentElement.id !== "running_rows"){
+                    row.parentElement.remove();
+                }
+
                 if (document.getElementById("host-"+poolData[i].id)){
                     updateText('height-'+poolData[i].id, height);
                     updateText('hashrate-'+poolData[i].id, hashrate);
@@ -282,10 +289,10 @@
                     updateText('lastBlockFound-'+poolData[i].id, blocTimeAgo);
                     updateText('pending-'+poolData[i].id, pending);
                     updateText('blocks-'+poolData[i].id, blocks);
-                    updateText('donation-'+poolData[i].id, donation);
-                    updateText('totalFee-'+poolData[i].id, fee);
+                    updateText('donation-'+poolData[i].id, donation + '%');
+                    updateText('totalFee-'+poolData[i].id, fee + '%');
                 } else {
-                    $('#pool_rows').append('<tr>' +
+                    $('#running_rows').append('<tr>' +
                         '<td id=host-' + poolData[i].id + '>' +
                         '<a '+loc+'target=blank href='+ poolData[i].url + '>'+ flag + ' ' + poolData[i].url + '</a></td>' +
                         '<td id=height-' + poolData[i].id + '>' + height + '</td>' +
@@ -298,8 +305,14 @@
                         '<td id=totalFee-' + poolData[i].id + '>' + fee + '%</td>' +
                         '</tr>');
                     $('[data-toggle="popover"]').popover({});
+                    $('#running_table').removeClass('d-none');
                 } // end if
             } else { // unreachable
+                row = document.getElementById("host-"+poolData[i].id);
+                if (row && row.parentElement.parentElement.id !== "dead_rows"){
+                    row.parentElement.remove();
+                }
+
                 if (! document.getElementById("host-"+poolData[i].id)) {
                     $('#dead_rows').append('<tr colspan="8">' +
                         '<td id=host-' + poolData[i].id + '><i id="flag-' + poolData[i].id + '" class="fas fa-exclamation-circle invisible"></i> <a target=blank href=' + poolData[i].url + '>' + poolData[i].url + '</a></td>' +
@@ -310,6 +323,15 @@
             }
 
         } // end for
+        if ($('#running_rows').find('tr').length === 0){
+            $('#running_table').addClass('d-none');
+        }
+        if ($('#out_rows').find('tr').length === 0){
+            $('#out_table').addClass('d-none');
+        }
+        if ($('#dead_rows').find('tr').length === 0){
+            $('#dead_table').addClass('d-none');
+        }
         updateText('totalHeight', parseInt($('#blockchainHeight').attr('data-height')));
         updateText('totalMiners', totalMiners);
         updateText('totalHashrate', getReadableHashRateString(totalHashrate));
@@ -354,7 +376,7 @@
         totalPending = 0;
         for(let i= 0; i < data.pool.blocks.length; i++) {
             if((i+1) % 2 == 0){
-                if(data.pool.blocks[i] > ($('#blockchainHeight').attr('data-height') - 20)){
+                if(data.pool.blocks[i] > ($('#blockchainHeight').attr('data-height') - data.config.depth)){
                     totalPending++;
                 }
             }
@@ -362,39 +384,29 @@
         return totalPending;
     }
 
-    var xhrGetCurrentMinedBlock;
+    var xhrGetCurrentHeight;
     // get last block template (current mining block)
     function getCurrentMinedBlock() {
-        if (xhrGetCurrentMinedBlock) xhrGetCurrentMinedBlock.abort();
-        xhrGetCurrentMinedBlock = $.ajax({
-            url: api + '/json_rpc',
-            method: "POST",
-            data: JSON.stringify({
-                jsonrpc: "2.0",
-                id: "2",
-                method: "getblocktemplate",
-                params: {
-                    reserve_size: 0,
-                    wallet_address: "bTXPouErxAPNQ9Ajwtn7NE589BiU7vb8y9rRow3vZYerBVA9AL2RGb498XgkXwYpUMLagvWSYfHEmW3X2LqCxd7214jA6JuyA"
-                }
-            }),
+        if (xhrGetCurrentHeight) xhrGetCurrentHeight.abort();
+        xhrGetCurrentHeight = $.ajax({
+            url: api + '/getinfo',
+            method: "GET",
             dataType: 'json',
             cache: 'false'
         })
             .done(function (data) {
-                if (data.hasOwnProperty('result')) {
-                    currentMinedBlock = data.result;
-                    updateText('networkHashrate', getReadableHashRateString(currentMinedBlock.difficulty / coinDifficultyTarget));
-                    $('#networkHashrate').attr('data-globalHR', currentMinedBlock.difficulty / coinDifficultyTarget);
-                    updateText('nextDifficulty', currentMinedBlock.difficulty.toString());
-                    updateText('blockchainHeight', currentMinedBlock.height);
-                    $('#blockchainHeight').attr('data-height', currentMinedBlock.height);
+                if (data.hasOwnProperty('difficulty')) {
+                    updateText('networkHashrate', getReadableHashRateString(data.difficulty / coinDifficultyTarget));
+                    $('#networkHashrate').attr('data-globalHR', data.difficulty.toString());
+                    updateText('nextDifficulty', data.difficulty.toString());
+                    $('#blockchainHeight').attr('data-height', data.network_height);
+                    updateText('blockchainHeight', data.network_height);
                 } else {
                     showalert('alert-danger','Core error : ',data.error.message);
                     $('#loading').hide();
                 }
             })
-            .fail(function (xhrGetCurrentMinedBlock, textStatus) {
+            .fail(function (xhrGetCurrentHeight, textStatus) {
                 if (textStatus != "abort") {
                     showalert('alert-danger','Can\'t connect to api : ',textStatus);
                     $('#loading').hide();

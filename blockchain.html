@@ -65,7 +65,7 @@
     // Current page handlers (whe should know lastMinedBlockHeader)
     currentPage = {
         destroy: function () {
-            if (xhrGetCurrentMinedBlock) xhrGetCurrentMinedBlock.abort();
+            if (xhrGetCurrentHeight) xhrGetCurrentHeight.abort();
             if (xhrGetLastBlocks) xhrGetLastBlocks.abort();
         },
         init: function (){
@@ -94,44 +94,35 @@
 
     // Current page functions.
 
-    var xhrGetCurrentMinedBlock;
+    var xhrGetCurrentHeight;
     // get last block template (current mining block)
     function getCurrentMinedBlock() {
-        if (xhrGetCurrentMinedBlock) xhrGetCurrentMinedBlock.abort();
-        xhrGetCurrentMinedBlock = $.ajax({
-            url: api + '/json_rpc',
-            method: "POST",
-            data: JSON.stringify({
-                jsonrpc: "2.0",
-                id: "2",
-                method: "getblocktemplate",
-                params: {
-                    reserve_size: 0,
-                    wallet_address: "bTXPouErxAPNQ9Ajwtn7NE589BiU7vb8y9rRow3vZYerBVA9AL2RGb498XgkXwYpUMLagvWSYfHEmW3X2LqCxd7214jA6JuyA"
-                }
-            }),
-            dataType: 'json',
-            cache: 'false'
+        if (xhrGetCurrentHeight) xhrGetCurrentHeight.abort();
+        xhrGetCurrentHeight = $.ajax({
+             url: api + '/getinfo',
+             method: "GET",
+             dataType: 'json',
+             cache: 'false'
         })
             .done(function (data) {
-                if (data.hasOwnProperty('result')) {
-                    let currentMinedBlock = data.result;
-                    updateText('networkHashrate', getReadableHashRateString(currentMinedBlock.difficulty / coinDifficultyTarget));
-                    updateText('nextDifficulty', currentMinedBlock.difficulty.toString());
-                    updateText('blockchainHeight', currentMinedBlock.height);
+                if (data.hasOwnProperty('difficulty')) {
+                    updateText('networkHashrate', getReadableHashRateString(data.difficulty / coinDifficultyTarget));
+                    $('#networkHashrate').attr('data-globalHR', data.difficulty.toString());
+                    updateText('nextDifficulty', data.difficulty.toString());
+                    $('#blockchainHeight').attr('data-height', data.network_height);
+                    updateText('blockchainHeight', data.network_height);
                 } else {
                     showalert('alert-danger','Core error : ',data.error.message);
                     $('#loading').hide();
                 }
             })
-            .fail(function (xhrGetCurrentMinedBlock, textStatus) {
+            .fail(function (xhrGetCurrentHeight, textStatus) {
                 if (textStatus != "abort") {
-                    showalert('alert-danger','Can\'t connect to api : ',textStatus);
+                    showalert('alert-danger','Request error : ',textStatus);
                     $('#loading').hide();
                 }
             });
     }
-
 
     // Get last 31 blocks
     $('#loadMoreBlocks').click(function() {

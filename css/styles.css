@@ -147,7 +147,11 @@ footer {
     max-width: 800px;
     display: none;
 }
-#pool_table{
+#pool_div{
+    padding: 0px !important;
+    width: 100%;
+}
+#running_table{
     padding: 0px !important;
     width: 100%;
 }
