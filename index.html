@@ -52,6 +52,10 @@
                     <a class="hot_link" href="#transaction" data-page="transaction.html" >transaction
                     </a>
                 </li>
+                <li style="display:none;">
+                    <a class="hot_link" href="#pool_transaction" data-page="pool_transaction.html">pool transaction
+                    </a>
+                </li>
             </ul>
             <div id="stats_updated"><i class="fas fa-sync fa-spin"></i></div>
         </div>
@@ -69,6 +73,7 @@
 </footer>
 <div id="alert_placeholder"></div>
 <script>
+    jQuery.timeago.settings.strings.seconds = '%d seconds';
 
     $(function () {
         getLastMinedBlockHeader();
